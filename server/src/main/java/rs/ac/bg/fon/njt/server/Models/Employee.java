@@ -1,39 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package rs.ac.bg.fon.njt.server.domain;
+package rs.ac.bg.fon.njt.server.Models;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- *
- * @author Lenovo
- */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @DiscriminatorValue("Employee")
-public class Employee extends User{
+public class Employee extends User {
+
+    @Column(name = "job_title")
     private String jobTitle;
-
-    public Employee() {
-    }
-
-    public Employee(String jobTitle, Long id, String firstName, String lastName, String email, UserType userType) {
-        super(id, firstName, lastName, email, userType);
-        this.jobTitle = jobTitle;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-    
-    
-    
     
 }

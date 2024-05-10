@@ -1,22 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package rs.ac.bg.fon.njt.server.domain;
+package rs.ac.bg.fon.njt.server.Models;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- *
- * @author Lenovo
- */
+@Getter
+@Setter
 @Entity
 @DiscriminatorValue("NonTeachingEmployee")
-public class NonTeachingEmployee extends Employee{
-
-    public NonTeachingEmployee() {
-    }
-    
-   
+public class NonTeachingEmployee extends Employee {
 }

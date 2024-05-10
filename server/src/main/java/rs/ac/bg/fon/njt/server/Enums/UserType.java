@@ -1,4 +1,4 @@
-package rs.ac.bg.fon.njt.server.Controllers;
+package rs.ac.bg.fon.njt.server.Enums;
 
 public enum UserType {
     User, Administrator

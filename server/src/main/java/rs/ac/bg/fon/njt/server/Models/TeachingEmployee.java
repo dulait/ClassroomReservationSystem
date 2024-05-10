@@ -1,45 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package rs.ac.bg.fon.njt.server.domain;
+package rs.ac.bg.fon.njt.server.Models;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- *
- * @author Lenovo
- */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @DiscriminatorValue("TeachingEmployee")
-public class TeachingEmployee extends Employee{
+public class TeachingEmployee extends Employee {
+
+    @Column(name = "academic_title")
     private String academicTitle;
+
+    @Column(name = "department")
     private String department;
 
-    public TeachingEmployee() {
-    }
-
-    public TeachingEmployee(String academicTitle, String department, String jobTitle, Long id, String firstName, String lastName, String email, UserType userType) {
-        super(jobTitle, id, firstName, lastName, email, userType);
-        this.academicTitle = academicTitle;
-        this.department = department;
-    }
-    public String getAcademicTitle() {
-        return academicTitle;
-    }
-
-    public void setAcademicTitle(String academicTitle) {
-        this.academicTitle = academicTitle;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-    
-    
 }

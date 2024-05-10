@@ -1,18 +1,12 @@
 package rs.ac.bg.fon.njt.server;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
-import rs.ac.bg.fon.njt.server.config.Config;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
-
-
+@SpringBootApplication
 public class ServerApplication {
-
-	public static void main(String[] args) {
-		    /*   ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
-                       System.out.println("HEHEH");*/
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ServerApplication.class, args);
+    }
 
 }
