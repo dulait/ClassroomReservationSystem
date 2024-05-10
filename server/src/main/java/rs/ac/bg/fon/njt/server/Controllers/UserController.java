@@ -32,12 +32,12 @@ public class UserController {
      * Get a User by id.
      *
      * @param id the id of the User
-     * @return the User with a status code of {@code 200 Found} if the User with the given id exists, otherwise {@code 404 Not Found}.
+     * @return the User with a status code of {@code 200 Ok} if the User with the given id exists, otherwise {@code 404 Not Found}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> show(@PathVariable(name = "id") Long id) {
         Optional<User> found = userService.findUserById(id);
-        return found.map(user -> new ResponseEntity<>(user, HttpStatus.FOUND)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return found.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
