@@ -25,9 +25,6 @@ public class TeachingEmployee extends Employee{
         this.academicTitle = academicTitle;
         this.department = department;
     }
-    
-    
-
     public String getAcademicTitle() {
         return academicTitle;
     }

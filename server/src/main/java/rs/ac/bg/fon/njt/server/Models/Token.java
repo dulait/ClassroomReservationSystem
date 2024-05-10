@@ -9,11 +9,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -24,15 +19,8 @@ import javax.persistence.Table;
 @Table(name = "tokens")
 public class Token {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user; // Referenca na User entitet
-    
-    
+    @EmbeddedId
+    private TokenId id;
      
     private String token;
     private Date createdAt;
@@ -46,29 +34,20 @@ public class Token {
     public Token() {
     }
 
-    public Token(Long id, User user, String token, Date createdAt, Date expiresAt, TokenType tokenType) {
+    public Token(TokenId id, String token, Date createdAt, Date expiresAt, TokenType tokenType) {
         this.id = id;
-        this.user = user;
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
         this.tokenType = tokenType;
     }
 
-    public Long getId() {
+    public TokenId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(TokenId id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getToken() {
@@ -105,10 +84,9 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token{" + "id=" + id + ", user=" + user + ", token=" + token + ", createdAt=" + createdAt + ", expiresAt=" + expiresAt + ", tokenType=" + tokenType + '}';
+        return "Token{" + "id=" + id + ", token=" + token + ", createdAt=" + createdAt + ", expiresAt=" + expiresAt + ", tokenType=" + tokenType + '}';
     }
 
-    
     
     
     

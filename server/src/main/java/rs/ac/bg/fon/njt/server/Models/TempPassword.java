@@ -19,7 +19,7 @@ import javax.persistence.Table;
  * @author Lenovo
  */
 @Entity
-@Table(name = "temp_passwords")
+@Table(name = "temp_password")
 public class TempPassword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,15 +27,12 @@ public class TempPassword {
     private String password;
     private Date createdAt;
     private Date expiresAt;
-    
-    
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     public TempPassword() {
     }
-
     public TempPassword(Long id, String password, Date createdAt, Date expiresAt, User user) {
         this.id = id;
         this.password = password;
