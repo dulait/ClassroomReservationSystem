@@ -1,14 +1,14 @@
 package rs.ac.bg.fon.njt.server.Controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.bg.fon.njt.server.Models.User;
 import rs.ac.bg.fon.njt.server.Services.UserService;
+import rs.ac.bg.fon.njt.server.Utils.Response;
+import rs.ac.bg.fon.njt.server.Utils.ResponseConverter;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,6 +16,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final ResponseConverter<User> converter;
 
     /**
      * Get a list of all Users.
@@ -24,9 +25,10 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<List<User>> index() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        Response<List<User>> response = userService.getAllUsers();
+        return converter.toListResponseEntity(response);
     }
+
 
     /**
      * Get a User by id.
@@ -36,8 +38,8 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> show(@PathVariable(name = "id") Long id) {
-        Optional<User> found = userService.findUserById(id);
-        return found.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Response<User> response = userService.findUserById(id);
+        return converter.toResponseEntity(response);
     }
 
     /**
@@ -48,8 +50,8 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<User> create(@RequestBody User user) {
-        boolean success = userService.createNewUser(user);
-        return success ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Response<User> response = userService.createNewUser(user);
+        return converter.toResponseEntity(response);
     }
 
     /**
@@ -60,9 +62,10 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@RequestBody User user) {
-        boolean success = userService.updateExistingUser(user);
-        return success ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Response<User> response = userService.updateExistingUser(user);
+        return converter.toResponseEntity(response);
     }
+
 
     /**
      * Delete an existing User.
@@ -72,8 +75,8 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<User> destroy(@PathVariable("id") Long id) {
-        boolean success = userService.deleteExistingUser(id);
-        return success ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Response<User> response = userService.deleteExistingUser(id);
+        return converter.toResponseEntity(response);
     }
 
 }

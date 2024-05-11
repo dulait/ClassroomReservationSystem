@@ -5,4 +5,5 @@ import rs.ac.bg.fon.njt.server.Models.User;
 public interface TokenService {
 
     String generateJwtToken(User user);
+
 }

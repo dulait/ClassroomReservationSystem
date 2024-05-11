@@ -7,6 +7,6 @@ import rs.ac.bg.fon.njt.server.Models.User;
 public class TokenServiceImpl implements TokenService {
     @Override
     public String generateJwtToken(User user) {
-        return null;
+        return "aksjhfahjgdjghasdghfasdh";
     }
 }
