@@ -22,4 +22,14 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendPasswordChangeLink(String email, String token){
+        SimpleMailMessage message = new SimpleMailMessage();
+        
+        message.setTo(email);
+        message.setFrom("fonreservations@gmail.com");
+        message.setSubject("Password change");
+        message.setText("Click on this link to change your password: " + "http://localhost:8080/api/change-password?token=" + token);
+
+        mailSender.send(message);
+    }
 }

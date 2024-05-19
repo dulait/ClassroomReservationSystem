@@ -20,5 +20,9 @@ public interface UserService {
     Response<User> updateExistingUser(User user);
 
     Response<User> deleteExistingUser(Long id);
-
+    
+    Response<User> findUserByToken(String token);
+    
+    boolean hasPassword(User user);
+    
 }

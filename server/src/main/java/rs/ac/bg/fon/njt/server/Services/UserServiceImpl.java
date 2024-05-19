@@ -11,6 +11,8 @@ import rs.ac.bg.fon.njt.server.Utils.Response;
 
 import java.util.List;
 import java.util.Optional;
+import rs.ac.bg.fon.njt.server.Models.Token;
+import rs.ac.bg.fon.njt.server.Repositories.TokenRepository;
 
 @RequiredArgsConstructor
 @Service
@@ -18,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordRepository passwordRepository;
+    private final TokenRepository tokenRepository;
 
     @Override
     public Response<List<User>> getAllUsers() {
@@ -110,5 +113,28 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
         return new Response<>(ResponseStatus.NoContent);
     }
+    
+    public boolean hasPassword(User user){
+        Optional<Password> password = passwordRepository.findByUserId(user.getId());
+        if(password.isPresent()){
+            return true;
+        }
+        
+        return false;
+    }
 
+    @Override
+    public Response<User> findUserByToken(String token) {
+        if(token == null){
+            return new Response<>(ResponseStatus.BadRequest);
+        }
+        Optional<Token> tokenResponse = tokenRepository.findByToken(token);
+        if(!tokenResponse.isPresent()){
+            return new Response<>(ResponseStatus.InternalServerError);
+        }
+        
+        User user = tokenResponse.get().getUser();
+        
+        return new Response<>(ResponseStatus.Ok, user);
+    }
 }

@@ -30,12 +30,16 @@ public class AuthController {
         return converter.toResponseEntity(response);
     }
 
-    @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestParam("email") String email,
-                                                 @RequestParam("oldPassword") String oldPassword,
-                                                 @RequestParam("newPassword") String newPassword) {
-        Response<String> response = authService.changePassword(email, oldPassword, newPassword);
+    @PostMapping("/request-password-change")
+    public ResponseEntity<String> requestPasswordChange(@RequestParam("email") String email) {
+        Response<String> response = authService.requestPasswordChange(email);
         return converter.toResponseEntity(response);
     }
-
+    
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestParam("token") String token,
+                                                @RequestParam("new-password") String newPassword) {
+        Response<String> response = authService.changePassword(token, newPassword);
+        return converter.toResponseEntity(response);
+    }
 }

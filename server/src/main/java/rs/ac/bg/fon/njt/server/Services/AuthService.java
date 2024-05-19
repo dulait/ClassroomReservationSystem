@@ -7,6 +7,7 @@ public interface AuthService {
 
     Response<String> loginUser(String email, String password);
 
-    Response<String> changePassword(String email, String oldPassword, String newPassword);
-
+    Response<String> requestPasswordChange(String email);
+    
+    Response<String> changePassword(String token, String newPassword);
 }
