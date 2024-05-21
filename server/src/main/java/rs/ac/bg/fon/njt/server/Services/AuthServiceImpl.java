@@ -58,7 +58,27 @@ public class AuthServiceImpl implements AuthService {
 
     public Response<String> loginUser(String email, String password) {
         // todo implement
-        return new Response<>(ResponseStatus.Ok);
+          if (email == null | password==null) {
+            return new Response<>(ResponseStatus.BadRequest, "Invalid email address or password.");
+        }
+        Response<User> existingUserResponse = userService.findUserByCredentials(email,password);
+        
+        if(existingUserResponse.getStatus() == ResponseStatus.NotFound){
+            return new Response<>(ResponseStatus.NotFound, "User with email " + email + " doesn't exist in the system.");
+        }
+        if(existingUserResponse.getStatus() == ResponseStatus.Unauthorized){
+            return new Response<>(ResponseStatus.Unauthorized, "Wrong password");
+        }
+      User existingUser = existingUserResponse.getData();
+       String token=tokenService.generateJwtToken(existingUser);
+        return new Response<>(ResponseStatus.Ok,token);
+            
+        
+          
+          
+          
+        
+       
     }
     @Override
     public Response<String> requestPasswordChange(String email) {

@@ -25,7 +25,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return new Response<>(ResponseStatus.Ok, users);
+         return new Response<>(ResponseStatus.Ok, users);
+       
+      
     }
 
     @Override
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<User> findUserByEmail(String email) {
         if (email == null || email.isBlank()) {
-            return new Response<>();
+            return new Response<>(ResponseStatus.BadRequest);
         }
 
         Optional<User> user = userRepository.findByEmail(email);
