@@ -10,6 +10,7 @@ import rs.ac.bg.fon.njt.server.Models.User;
 import rs.ac.bg.fon.njt.server.Utils.*;
 
 import java.util.Date;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import rs.ac.bg.fon.njt.server.Enums.TokenType;
 import rs.ac.bg.fon.njt.server.Models.Token;
@@ -57,65 +58,58 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public Response<String> loginUser(String email, String password) {
-        // todo implement
-          if (email == null | password==null) {
+        if (email == null | password == null) {
             return new Response<>(ResponseStatus.BadRequest, "Invalid email address or password.");
         }
-        Response<User> existingUserResponse = userService.findUserByCredentials(email,password);
-        
-        if(existingUserResponse.getStatus() == ResponseStatus.NotFound){
+        Response<User> existingUserResponse = userService.findUserByCredentials(email, password);
+
+        if (existingUserResponse.getStatus() == ResponseStatus.NotFound) {
             return new Response<>(ResponseStatus.NotFound, "User with email " + email + " doesn't exist in the system.");
         }
-        if(existingUserResponse.getStatus() == ResponseStatus.Unauthorized){
+        if (existingUserResponse.getStatus() == ResponseStatus.Unauthorized) {
             return new Response<>(ResponseStatus.Unauthorized, "Wrong password");
         }
-      User existingUser = existingUserResponse.getData();
-       String token=tokenService.generateJwtToken(existingUser);
-        return new Response<>(ResponseStatus.Ok,token);
-            
-        
-          
-          
-          
-        
-       
+        User existingUser = existingUserResponse.getData();
+        String token = tokenService.generateJwtToken(existingUser);
+        return new Response<>(ResponseStatus.Ok, token);
     }
+
     @Override
     public Response<String> requestPasswordChange(String email) {
-        if(email == null){
+        if (email == null) {
             return new Response<>(ResponseStatus.BadRequest, "Invalid email.");
         }
         Response<User> currentUserResponse = userService.findUserByEmail(email);
-        if(!(currentUserResponse.getStatus() == ResponseStatus.Ok)){
+        if (!(currentUserResponse.getStatus() == ResponseStatus.Ok)) {
             return new Response<>(ResponseStatus.NotFound, "User with provided email does not exist.");
         }
-        
-        if(!userService.hasPassword(currentUserResponse.getData())){
+
+        if (!userService.hasPassword(currentUserResponse.getData())) {
             return new Response<>(ResponseStatus.InternalServerError, "The user does not have a password.");
         }
-        
+
         Token token = tokenService.createPasswordChangeToken(currentUserResponse.getData());
         String tokenString = token.getToken();
-        
+
         emailService.sendPasswordChangeLink(email, tokenString);
-        
+
         return new Response<>(ResponseStatus.Ok, "Password change link sent successfully.");
     }
 
     @Override
     public Response<String> changePassword(String token, String newPassword) {
-       if(token == null || newPassword == null){
-           return new Response<>(ResponseStatus.BadRequest, "Invalid parameters.");
-       }
-       Response<User> userResponse = userService.findUserByToken(token);
-       if(!(userResponse.getStatus() == ResponseStatus.Ok)){
-           return new Response<>(ResponseStatus.InternalServerError, "User with this token does not exist.");
-       }
-       Password password = new Password();
-       password.setUser(userResponse.getData());
-       password.setPasswordHash(newPassword);
-       
-       passwordService.updatePassword(password);
-       return new Response<>(ResponseStatus.Ok, "Password successfully changed.");
+        if (token == null || newPassword == null) {
+            return new Response<>(ResponseStatus.BadRequest, "Invalid parameters.");
+        }
+        Response<User> userResponse = userService.findUserByToken(token);
+        if (!(userResponse.getStatus() == ResponseStatus.Ok)) {
+            return new Response<>(ResponseStatus.InternalServerError, "User with this token does not exist.");
+        }
+        Password password = new Password();
+        password.setUser(userResponse.getData());
+        password.setPasswordHash(newPassword);
+
+        passwordService.updatePassword(password);
+        return new Response<>(ResponseStatus.Ok, "Password successfully changed.");
     }
 }
