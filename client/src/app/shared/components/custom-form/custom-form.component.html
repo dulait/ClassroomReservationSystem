@@ -1,0 +1,40 @@
+<div class="form">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div *ngFor="let field of fields">
+            <ng-container [ngSwitch]="field.type">
+                <mat-form-field *ngSwitchCase="'text'" appearance="fill">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <input matInput [formControlName]="field.name" />
+                </mat-form-field>
+
+                <mat-form-field *ngSwitchCase="'date'" appearance="fill">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <input matInput [formControlName]="field.name" [matDatepicker]="picker" />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field *ngSwitchCase="'select'" appearance="fill">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <mat-select [formControlName]="field.name">
+                        <mat-option *ngFor="let option of field.options" [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngSwitchCase="'password'" appearance="fill">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <input matInput [type]="'password'" [formControlName]="field.name" />
+                </mat-form-field>
+            </ng-container>
+        </div>
+
+        <div class="form-actions">
+            <button *ngFor="let button of buttons" mat-button [color]="button.color || 'primary'"
+                (click)="button.action(form.value)">
+                {{ button.text }}
+            </button>
+        </div>
+    </form>
+</div>
