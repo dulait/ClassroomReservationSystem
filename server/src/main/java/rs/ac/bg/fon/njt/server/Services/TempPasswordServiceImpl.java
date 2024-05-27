@@ -7,6 +7,7 @@ import rs.ac.bg.fon.njt.server.Models.User;
 import rs.ac.bg.fon.njt.server.Repositories.TempPasswordRepository;
 
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -23,5 +24,20 @@ public class TempPasswordServiceImpl implements TempPasswordService {
         tempPasswordEntity.setExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
 
         tempPasswordRepository.save(tempPasswordEntity);
+    }
+
+    @Override
+    public void invalidateTempPassword(User user) {
+        tempPasswordRepository.deleteByUser(user);
+    }
+
+    @Override
+    public boolean isTempPassword(User user, String password) {
+        Optional<TempPassword> tempPasswordEntity = tempPasswordRepository.findByUser(user);
+        if (tempPasswordEntity.isPresent()) {
+            TempPassword tempPassword = tempPasswordEntity.get();
+            return tempPassword.getPassword().equals(password) && tempPassword.getExpiresAt().after(new Date());
+        }
+        return false;
     }
 }

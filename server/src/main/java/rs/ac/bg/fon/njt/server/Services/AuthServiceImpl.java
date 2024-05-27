@@ -1,18 +1,14 @@
 package rs.ac.bg.fon.njt.server.Services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.njt.server.Enums.ResponseStatus;
 import rs.ac.bg.fon.njt.server.Enums.UserType;
 import rs.ac.bg.fon.njt.server.Models.Password;
-import rs.ac.bg.fon.njt.server.Models.TempPassword;
 import rs.ac.bg.fon.njt.server.Models.User;
 import rs.ac.bg.fon.njt.server.Utils.*;
 
-import java.util.Date;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import rs.ac.bg.fon.njt.server.Enums.TokenType;
 import rs.ac.bg.fon.njt.server.Models.Token;
 
 
@@ -35,26 +31,61 @@ public class AuthServiceImpl implements AuthService {
         Response<User> existingUserResponse = userService.findUserByEmail(email);
         if (existingUserResponse.getStatus() == ResponseStatus.Ok) {
             User existingUser = existingUserResponse.getData();
-            if (existingUser.getUserType() != UserType.NotRegistered) {
+            if (existingUser.getUserType() == UserType.User) {
                 return new Response<>(ResponseStatus.Conflict, "User with email " + email + " already exists.");
             }
         } else {
             return new Response<>(ResponseStatus.BadRequest, "User with email " + email + " doesn't exist in the system.");
         }
 
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setUserType(UserType.NotRegistered);
-        Response<User> createUserResponse = userService.createNewUser(newUser);
-        if (createUserResponse.getStatus() != ResponseStatus.Ok) {
-            return new Response<>(ResponseStatus.InternalServerError, "Failed to register user.");
-        }
-
         String tempPassword = PasswordUtil.generateTempPassword();
-        tempPasswordService.saveTempPassword(createUserResponse.getData(), tempPassword);
+        tempPasswordService.saveTempPassword(existingUserResponse.getData(), tempPassword);
         emailService.sendTempPassword(email, tempPassword);
 
         return new Response<>(ResponseStatus.Ok, "Success. Temporary password sent to email: " + email);
+    }
+
+    @Override
+    public Response<String> verifyTempPassword(String email, String tempPassword) {
+        if (email == null || tempPassword == null) {
+            return new Response<>(ResponseStatus.BadRequest, "Invalid parameters.");
+        }
+
+        Response<User> userResponse = userService.findUserByEmail(email);
+        if (userResponse.getStatus() != ResponseStatus.Ok) {
+            return new Response<>(ResponseStatus.NotFound, "User with email " + email + " doesn't exist in the system.");
+        }
+
+        User user = userResponse.getData();
+        if (!tempPasswordService.isTempPassword(user, tempPassword)) {
+            return new Response<>(ResponseStatus.Unauthorized, "Invalid temporary password.");
+        }
+
+        return new Response<>(ResponseStatus.Ok, "Temporary password verified.");
+    }
+
+    @Transactional
+    @Override
+    public Response<String> setNewPassword(String email, String newPassword) {
+        if (email == null || newPassword == null) {
+            return new Response<>(ResponseStatus.BadRequest, "Invalid parameters.");
+        }
+
+        Response<User> userResponse = userService.findUserByEmail(email);
+        if (userResponse.getStatus() != ResponseStatus.Ok) {
+            return new Response<>(ResponseStatus.NotFound, "User with email " + email + " doesn't exist in the system.");
+        }
+
+        User user = userResponse.getData();
+
+        Password password = new Password();
+        password.setUser(user);
+        password.setPasswordHash(newPassword);
+        passwordService.savePassword(password);
+
+        tempPasswordService.invalidateTempPassword(user);
+
+        return new Response<>(ResponseStatus.Ok, "Password successfully set.");
     }
 
     public Response<String> loginUser(String email, String password) {
@@ -66,9 +97,11 @@ public class AuthServiceImpl implements AuthService {
         if (existingUserResponse.getStatus() == ResponseStatus.NotFound) {
             return new Response<>(ResponseStatus.NotFound, "User with email " + email + " doesn't exist in the system.");
         }
+
         if (existingUserResponse.getStatus() == ResponseStatus.Unauthorized) {
             return new Response<>(ResponseStatus.Unauthorized, "Wrong password");
         }
+
         User existingUser = existingUserResponse.getData();
         String token = tokenService.generateJwtToken(existingUser);
         return new Response<>(ResponseStatus.Ok, token);
