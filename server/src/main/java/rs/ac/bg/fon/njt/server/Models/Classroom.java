@@ -1,6 +1,7 @@
 package rs.ac.bg.fon.njt.server.Models;
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,5 +35,8 @@ public class Classroom {
 
     @Column(name = "is_active")
     private boolean isActive;
+    
+    @OneToMany(mappedBy="classroom")
+    private List<Reservation> reservations;
 
 }
