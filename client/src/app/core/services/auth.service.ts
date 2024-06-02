@@ -7,19 +7,24 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
+  private apiUrl = 'http://localhost:8080/api/auth';
+
   constructor(private http: HttpClient) { }
 
-  private apiUrl: string = "http://127.0.0.1:8080/api/auth";
-  private registerUrl: string = this.apiUrl + "/register";
-  private loginUrl: string = this.apiUrl + "/login"
-
-  register(data: any): Observable<any> {
-    return this.http.post<any>(this.registerUrl, data);
+  register(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, { email }, { responseType: 'text' });
   }
 
-  login(data: any): Observable<any> {
-    return this.http.post<any>(this.loginUrl, data);
+  verifyTempPassword(email: string, tempPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/verify-temp-password`, { email, tempPassword }, { responseType: 'text' });
   }
 
+  setNewPassword(email: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/set-new-password`, { email, newPassword }, { responseType: 'text' });
+  }
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, password }, { responseType: 'text' })
+  }
 
 }

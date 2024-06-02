@@ -26,6 +26,7 @@ export class RouteService {
 
   isAuthPage(): boolean {
     return this.router.url.startsWith('/login') || this.router.url.startsWith('/register')
-      || this.router.url.startsWith('/zaboravljena-lozinka') || this.router.url.startsWith('/promena-lozinke');
+      || this.router.url.startsWith('/verify-temp-password') || this.router.url.startsWith('/set-new-password')
+      || this.router.url.startsWith('/change-password');
   }
 }

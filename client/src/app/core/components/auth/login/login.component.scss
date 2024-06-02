@@ -1,8 +1,12 @@
-app-custom-form {
+.wrapper {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100vh;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
     text-align: center;
-    min-height: 100vh;
 }

@@ -1,0 +1,14 @@
+<div class="wrapper">
+    <div class="form">
+        <div class="form-content">
+            <h2>Register a new account</h2>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" placeholder="example@gmail.com" [(ngModel)]="email" name="email" required>
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="primary" (click)="register()">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
