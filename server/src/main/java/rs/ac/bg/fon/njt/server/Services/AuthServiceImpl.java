@@ -7,6 +7,7 @@ import rs.ac.bg.fon.njt.server.Enums.ResponseStatus;
 import rs.ac.bg.fon.njt.server.Enums.UserType;
 import rs.ac.bg.fon.njt.server.Models.Password;
 import rs.ac.bg.fon.njt.server.Models.User;
+import rs.ac.bg.fon.njt.server.Repositories.UserRepository;
 import rs.ac.bg.fon.njt.server.Utils.*;
 
 import rs.ac.bg.fon.njt.server.Models.Token;
@@ -21,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final TempPasswordService tempPasswordService;
     private final TokenService tokenService;
     private final EmailService emailService;
+    private final UserRepository userRepository;
 
     @Override
     public Response<String> registerUser(String email) {
@@ -28,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
             return new Response<>(ResponseStatus.BadRequest, "Invalid email address.");
         }
 
-        Response<User> existingUserResponse = userService.findUserByEmail(email);
-        if (existingUserResponse.getStatus() == ResponseStatus.Ok) {
-            User existingUser = existingUserResponse.getData();
+        Response<User> response = userService.findUserByEmail(email);
+        if (response.getStatus() == ResponseStatus.Ok) {
+            User existingUser = response.getData();
             if (existingUser.getUserType() == UserType.User) {
                 return new Response<>(ResponseStatus.Conflict, "User with email " + email + " already exists.");
             }
@@ -39,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String tempPassword = PasswordUtil.generateTempPassword();
-        tempPasswordService.saveTempPassword(existingUserResponse.getData(), tempPassword);
+        tempPasswordService.saveTempPassword(response.getData(), tempPassword);
         emailService.sendTempPassword(email, tempPassword);
 
         return new Response<>(ResponseStatus.Ok, "Success. Temporary password sent to email: " + email);
@@ -85,6 +87,8 @@ public class AuthServiceImpl implements AuthService {
 
         tempPasswordService.invalidateTempPassword(user);
 
+        user.setUserType(UserType.User);
+        userRepository.save(user);
         return new Response<>(ResponseStatus.Ok, "Password successfully set.");
     }
 

@@ -9,6 +9,8 @@ import java.util.List;
 public class ResponseConverter<T> {
 
     public ResponseEntity<T> toResponseEntity(Response<T> response) {
+        ResponseEntity<T> e = ResponseEntity.status(response.getStatus().getCode()).body(response.getData());
+        System.out.println(e.getBody());
         return ResponseEntity.status(response.getStatus().getCode()).body(response.getData());
     }
 

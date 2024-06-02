@@ -11,6 +11,7 @@ import rs.ac.bg.fon.njt.server.Utils.Response;
 
 import java.util.List;
 import java.util.Optional;
+
 import rs.ac.bg.fon.njt.server.Models.Token;
 import rs.ac.bg.fon.njt.server.Repositories.TokenRepository;
 
@@ -25,9 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
-         return new Response<>(ResponseStatus.Ok, users);
-       
-      
+        return new Response<>(ResponseStatus.Ok, users);
     }
 
     @Override
@@ -37,10 +36,8 @@ public class UserServiceImpl implements UserService {
         }
         Optional<User> user = userRepository.findById(id);
 
-        return user.map(
-                        value -> new Response<>(ResponseStatus.Ok, value))
-                .orElseGet(() -> new Response<>(ResponseStatus.NotFound)
-                );
+        return user.map(value -> new Response<>(ResponseStatus.Ok, value))
+                .orElseGet(() -> new Response<>(ResponseStatus.NotFound));
     }
 
     @Override
@@ -51,10 +48,8 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> user = userRepository.findByEmail(email);
 
-        return user.map(
-                        value -> new Response<>(ResponseStatus.Ok, value))
-                .orElseGet(() -> new Response<>(ResponseStatus.NotFound)
-                );
+        return user.map(value -> new Response<>(ResponseStatus.Ok, value))
+                .orElseGet(() -> new Response<>(ResponseStatus.NotFound));
     }
 
     @Override
@@ -115,28 +110,28 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
         return new Response<>(ResponseStatus.NoContent);
     }
-    
-    public boolean hasPassword(User user){
+
+    public boolean hasPassword(User user) {
         Optional<Password> password = passwordRepository.findByUserId(user.getId());
-        if(password.isPresent()){
+        if (password.isPresent()) {
             return true;
         }
-        
+
         return false;
     }
 
     @Override
     public Response<User> findUserByToken(String token) {
-        if(token == null){
+        if (token == null) {
             return new Response<>(ResponseStatus.BadRequest);
         }
         Optional<Token> tokenResponse = tokenRepository.findByToken(token);
-        if(!tokenResponse.isPresent()){
+        if (!tokenResponse.isPresent()) {
             return new Response<>(ResponseStatus.InternalServerError);
         }
-        
+
         User user = tokenResponse.get().getUser();
-        
+
         return new Response<>(ResponseStatus.Ok, user);
     }
 }
